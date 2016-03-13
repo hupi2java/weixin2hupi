@@ -81,7 +81,7 @@ public class WeiXinServlet extends HttpServlet {
 				}else if(content.startsWith("天气查询")){
 					String city = content.replaceAll("^天气查询", "").trim();
 					if(city != "")
-						message = MessageUtil.initWeatherNews(toUserName, fromUserName, WeiXinUtils.queryWeather(city));
+						message = MessageUtil.initWeatherNews(toUserName, fromUserName, WeiXinUtils.queryWeatherByFutrue(city), city);
 				}else{
 						message = MessageUtil.initText(toUserName, fromUserName, "你说的我不懂呀！请发送 ？ 或 帮助 ！");
 				}
