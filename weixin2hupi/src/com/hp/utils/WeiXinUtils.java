@@ -15,6 +15,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
+import com.baidu.apistore.sdk.asb.e;
 import com.hp.domain.AccessToken;
 import com.hp.domain.trans.TransResult;
 
@@ -178,35 +179,6 @@ public class WeiXinUtils {
 		return result.toString();
 	}
 	
-	/**
-	 * 天气查询
-	 * @param city
-	 * @return
-	 * @throws ClientProtocolException
-	 * @throws IOException
-	 */
-//	public static JSONObject queryWeather(String city) throws ClientProtocolException, IOException{
-//		String url = "http://apis.baidu.com/heweather/weather/free?city=CITY";
-//		String newUrl = url.replace("CITY", city);
-//		JSONObject jsonObject = doGet(newUrl, APIKEY);
-//		return jsonObject;
-//	}//该API返回数据较难处理，日期混乱
-//	
-	
-	/**
-	 * 查询天气 该API只返回当日天气
-	 * @param city
-	 * @return
-	 * @throws ClientProtocolException
-	 * @throws IOException
-	 */
-	public static JSONObject queryWeather(String city) throws ClientProtocolException, IOException{
-		//根据城市名查询天气
-		String urlOfqueryWeather = "http://apis.baidu.com/apistore/weatherservice/cityname?cityname=CITY";
-		String newUrlOfqueryWeather = urlOfqueryWeather.replace("CITY", URLEncoder.encode(city, "UTF-8"));
-		JSONObject jsonObject = doGet(newUrlOfqueryWeather, APIKEY);
-		return jsonObject;
-	}
 	
 	/**
 	 * 查询天气 该API返回多日天气
@@ -236,10 +208,29 @@ public class WeiXinUtils {
 	 * @throws IOException
 	 */
 	public static String  queryCityCode(String city) throws ClientProtocolException, IOException,JSONException{
-		String url = "http://apis.baidu.com/apistore/weatherservice/cityinfo?cityname=CITY";
+		String url = "http://apis.baidu.com/apistore/weatherservice/citylist?cityname=CITY";
 		String newUrl = url.replace("CITY", URLEncoder.encode(city, "UTF-8"));
 		JSONObject jsonObject = doGet(newUrl, APIKEY);
-		String cityCode = jsonObject.getJSONObject("retData").getString("cityCode");
+		String cityCode = jsonObject.getJSONArray("retData").getJSONObject(0).getString("area_id");
 		return cityCode;
+	}
+	
+	/**
+	 * 检测city是否是可用城市
+	 * @param city
+	 * @return
+	 * @throws ClientProtocolException
+	 * @throws IOException
+	 */
+	public static boolean checkCity(String city) throws ClientProtocolException, IOException{
+		String url = "http://apis.baidu.com/apistore/weatherservice/citylist?cityname=CITY";
+		String newUrl = url.replace("CITY", URLEncoder.encode(city,"UTF-8"));
+		JSONObject jsonObject = doGet(newUrl,APIKEY);
+		String errNum = jsonObject.getString("errNum");
+		if("0".equals(errNum)){
+			return true;
+		}else{
+			return false;
+		}
 	}
 }

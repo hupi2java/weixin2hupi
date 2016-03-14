@@ -102,13 +102,13 @@ public class MessageUtil {
 		List<News> list = new ArrayList<News>();
 		News new1 = new News();
 		new1.setDescription("曾经多美，如今多毁");
-		new1.setPicUrl("http://1f45g94395.iask.in/weixin2hupi/images/DSC07049.JPG");
+		new1.setPicUrl("http://hupi.aliapp.com/images/DSC07049.JPG");
 		new1.setTitle("胡辟的大学时光");
 		new1.setUrl("http://www.hao123.com");
 		News new2 = new News();
 		new2.setTitle("几十再青春");
 		new2.setDescription("何时能重逢");
-		new2.setPicUrl("http://1f45g94395.iask.in/weixin2hupi/images/20120427082.jpg");
+		new2.setPicUrl("http://hupi.aliapp.com/images/20120427082.jpg");
 		new2.setUrl("http://www.hao123.com");
 		list.add(new1);
 		list.add(new2);
@@ -196,76 +196,13 @@ public class MessageUtil {
 	public static String queryWeatherMenu(){
 		StringBuffer str = new StringBuffer();
 		str.append("你可以使用天气功能:\n");
-		str.append("发送格式：天气查询+内容\n");
-		str.append("如：天气查询上海\n");
+		str.append("发送格式：城市名+天气\n");
+		str.append("如：上海天气\n");
 		str.append("返回主菜单请发送：？或 帮助\n");
 		return str.toString();
 	}
 	
-	/**
-	 * 天气信息组装
-	 * @param toUserName
-	 * @param fromUserName
-	 * @param jsonObject
-	 * @return
-	 */
-//	public static String initWeatherNews(String toUserName,String fromUserName,JSONObject jsonObject){
-//		
-//		String status = jsonObject.getJSONArray("HeWeather data service 3.0").getJSONObject(0).getString("status");
-//		if("unknown city".equals(status)){
-//			return initText(toUserName, fromUserName,"城市名错误 ，请检查城市名，并重新发送");
-//		}
-//
-//		NewsMessage newsMessage = new NewsMessage();
-//		List<News> list = new ArrayList<News>();
-//		News new1 = new News();
-//		News new2 = new News();
-//				
-//		String today = initDailyForecast(3,jsonObject);
-//		String tomorrow = initDailyForecast(4, jsonObject);
-//		
-//		new1.setTitle(today);
-//		new1.setDescription("今日天气");
-//		
-//		new2.setTitle(tomorrow);
-//		new2.setDescription("明日天气");
-//		
-//		list.add(new1);
-//		list.add(new2);
-//		
-//		newsMessage.setToUserName(fromUserName);
-//		newsMessage.setFromUserName(toUserName);
-//		newsMessage.setCreateTime(new Date().getTime());
-//		newsMessage.setArticleCount(list.size());
-//		newsMessage.setArticles(list);
-//		newsMessage.setMsgType("news");
-//		return newsMessageToXml(newsMessage);
-//		
-//	}
-//
-//	public static String initDailyForecast(int targetDate,JSONObject jsonObject){
-//		JSONObject now = jsonObject.getJSONArray("HeWeather data service 3.0").getJSONObject(0).getJSONObject("now");
-//		JSONArray daily_forecast = jsonObject.getJSONArray("HeWeather data service 3.0").getJSONObject(0).getJSONArray("daily_forecast");
-//		
-//		String nowTmp = now.getString("tmp");//体感温度
-//		String txt = now.getJSONObject("cond").getString("txt");//天气情况
-//		JSONObject today = daily_forecast.getJSONObject(targetDate);
-//		String date = today.getString("date");//日期
-//		String month = date.split("-")[1];
-//		String day = date.split("-")[2];
-//		JSONObject tmp = today.getJSONObject("tmp");//气温
-//		String maxTmp = tmp.getString("max"); 
-//		String minTmp = tmp.getString("min");
-//		JSONObject wind = today.getJSONObject("wind");
-//		String dir = wind.getString("dir");//风向
-//		String sc = wind.getString("sc");//风力
-//		if(targetDate == 3){
-//			return "今日 "+month+"月"+day+"日"+"(实时："+nowTmp+"℃) "+txt+" "+sc+" "+minTmp+"~"+maxTmp+"℃";
-//		}else{
-//			return month+"月"+day+"日 "+txt+" "+sc+" "+minTmp+"~"+maxTmp+"℃";
-//		}
-//		
-//	}
+
 	/**
 	 * 装配天气信息
 	 * @param toUserName
@@ -275,10 +212,7 @@ public class MessageUtil {
 	 * @throws IOException 
 	 * @throws ClientProtocolException 
 	 */
-	public static String initWeatherNews(String toUserName,String fromUserName,JSONObject jsonObject,String city) throws ClientProtocolException, IOException{
-		if(jsonObject==null){
-			return initText(toUserName, fromUserName,"城市名错误 ，请检查城市名，并重新发送");
-		}
+	public static String initWeatherNews(String toUserName,String fromUserName,JSONObject jsonObject) throws ClientProtocolException, IOException{
 		String errNum = jsonObject.getString("errNum");
 		if("-1".equals(errNum)){
 			return initText(toUserName, fromUserName,"城市名错误 ，请检查城市名，并重新发送");
@@ -288,17 +222,14 @@ public class MessageUtil {
 		List<News> list = new ArrayList<News>();
 		
 		//new1.setTitle(initDaily(jsonObject)); //单日AIP
-		try{
 			
 		News new1 = new News();
 		News new2 = new News();
 		News new3 = new News();
-		News new4 = new News();
-		
+		News new4 = new News();		
 		News new5 = new News();
 		
-		new1.setTitle(initDailyForecast(jsonObject));
-				
+		new1.setTitle(initDailyForecast(jsonObject));				
 		new1.setDescription("今日天气");
 		
 		new2.setTitle(initDailyForecast(jsonObject, 0));
@@ -311,12 +242,6 @@ public class MessageUtil {
 		list.add(new3);
 		list.add(new4);
 		list.add(new5);
-		}catch( JSONException e){
-			jsonObject = WeiXinUtils.queryWeather(city);
-			News new1 = new News();
-			new1.setTitle(initDaily(jsonObject));
-			list.add(new1);
-		}
 		
 		newsMessage.setToUserName(fromUserName);
 		newsMessage.setFromUserName(toUserName);
@@ -328,24 +253,6 @@ public class MessageUtil {
 		
 	}
 	
-	/**
-	 * 初始化 单日的天气信息 （jsonObject 为单日天气时使用）
-	 * @param jsonObject
-	 * @return
-	 */
-	public static String initDaily(JSONObject jsonObject){
-		JSONObject retData = jsonObject.getJSONObject("retData");
-		String city = retData.getString("city");
-		String date = retData.getString("date");
-		String month = date.split("-")[1];
-		String day = date.split("-")[2];
-		String weather = retData.getString("weather");
-		String temp = retData.getString("temp");
-		String l_tmp = retData.getString("l_tmp");
-		String h_tmp = retData.getString("h_tmp");
-		String WS = retData.getString("WS");
-		return city +" 今日  "+month+"月"+day+"日 (实时："+temp+"℃) "+weather+" "+WS+" "+l_tmp+"~"+h_tmp+"℃";
-	}
 	
 	/**
 	 * 初始化天气 （jsonObject 为多日天气时使用），获取未来第i天信息
@@ -357,15 +264,16 @@ public class MessageUtil {
 		JSONObject retData = jsonObject.getJSONObject("retData");
 		JSONArray forecast = retData.getJSONArray("forecast");
 		JSONObject check = forecast.getJSONObject(i);
-		String date = check.getString("date");
-		String month = date.split("-")[1];
-		String day = date.split("-")[2];
+//		String date = check.getString("date");//该API查询如浦东 是会出现日期信息不完整
+//		String month = date.split("-")[1];
+//		String day = date.split("-")[2];
 		String week = check.getString("week");
 		String type = check.getString("type");
 		String lowtemp = check.getString("lowtemp");
 		String hightemp = check.getString("hightemp");
 		String fengli = check.getString("fengli");
-		return  week+" "+month+"月"+day+"日  "+type+" "+fengli+" "+lowtemp+"~"+hightemp;
+		//return  week+" "+month+"月"+day+"日  "+type+" "+fengli+" "+lowtemp+"~"+hightemp;
+		return  week+" "+type+" "+fengli+" "+lowtemp+"~"+hightemp;
 	}
 	
 	/**

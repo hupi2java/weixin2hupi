@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONObject;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 
@@ -78,10 +80,16 @@ public class WeiXinServlet extends HttpServlet {
 					String phone = content.replaceAll("^电话归属地查询", "").trim();
 					if(phone != "")
 						message = MessageUtil.initText(toUserName, fromUserName, WeiXinUtils.queryMobilenumber(phone));
-				}else if(content.startsWith("天气查询")){
-					String city = content.replaceAll("^天气查询", "").trim();
-					if(city != "")
-						message = MessageUtil.initWeatherNews(toUserName, fromUserName, WeiXinUtils.queryWeatherByFutrue(city), city);
+				}else if(content.endsWith("天气")){
+					String city = content.replace("天气", "").trim();
+					if(city != ""){
+						if(!WeiXinUtils.checkCity(city)){
+							message = MessageUtil.initText(toUserName, fromUserName,"城市名错误 ，请检查城市名，并重新发送");
+						}else{
+							JSONObject jsonObject = WeiXinUtils.queryWeatherByFutrue(city);
+							message = MessageUtil.initWeatherNews(toUserName, fromUserName, jsonObject);
+						}
+					}	
 				}else{
 						message = MessageUtil.initText(toUserName, fromUserName, "你说的我不懂呀！请发送 ？ 或 帮助 ！");
 				}
