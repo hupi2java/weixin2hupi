@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	
+	<!-- 后缀名 -->
+	<constant name="struts.action.extension" value="do,action"/>
+	
+	<constant name="struts.i18n.encoding" value="UTF-8"/>
+	
+	<constant name="struts.ui.theme" value="simple"></constant>
+	
+	<package name="default" extends="struts-default">
+		<action name="weatherInfo" class="com.hp.action.WeatherAction" method="weatherInfo">
+			<result name="weatherInfo">/WEB-INF/weather/weather.jsp</result>
+		</action>
+	</package>
+</struts>    

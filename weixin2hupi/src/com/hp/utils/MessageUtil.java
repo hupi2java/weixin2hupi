@@ -2,6 +2,7 @@ package com.hp.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import org.dom4j.io.SAXReader;
 import com.hp.domain.News;
 import com.hp.domain.NewsMessage;
 import com.hp.domain.TextMessage;
+import com.hp.filter.EncoldingFilter;
 import com.thoughtworks.xstream.XStream;
 
 public class MessageUtil {
@@ -231,6 +233,10 @@ public class MessageUtil {
 		
 		new1.setTitle(initDailyForecast(jsonObject));				
 		new1.setDescription("今日天气");
+		String city = jsonObject.getJSONObject("retData").getString("city");
+		String url = "http://1f45g94395.iask.in/weixin2hupi/weatherInfo.do?city=CITY";
+		String newUrl = url.replace("CITY", URLEncoder.encode(city, "UTF-8")); 
+		new1.setUrl(newUrl);
 		
 		new2.setTitle(initDailyForecast(jsonObject, 0));
 		new3.setTitle(initDailyForecast(jsonObject, 1));
